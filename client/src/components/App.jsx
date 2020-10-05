@@ -30,13 +30,15 @@ export default class App extends React.Component {
     }).done(results => {
       let data = []
       Object.keys(results.values()['Session Page Views']).map(key => {
+        const datetime = new Date(key.substring(0,4), key.substring(5,7) - 1, key.substring(8,10), key.substring(11,13), key.substring(14,16))
         data.push({
+          datetime: datetime,
           date: key.substring(0, 10),
-          time: key.substring(11),
+          time: datetime.getTime(),
           views: results.values()['Session Page Views'][key]
         })
       })
-      console.log(Math.max(...Object.values(results.values()['Session Page Views'])) * 1.1)
+      console.log(data)
       this.setState({
         sessionPageViews: data,
         yMax: Math.max(...Object.values(results.values()['Session Page Views'])) * 1.1

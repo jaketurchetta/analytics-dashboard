@@ -17,11 +17,12 @@ export default function D3blackbox(d3render) {
   }
 }
 
-
 export const XAxis = D3blackbox(function() {
   const axis = d3
     .axisBottom()
-    .tickFormat(d => d3.timeFormat("%H:%M %S")(d))
+    .tickFormat(d => {
+      return d3.timeFormat("%I:%M %p")(d)
+    })
     .scale(this.props.xScale)
 
   d3
@@ -61,10 +62,7 @@ export const YGrid = D3blackbox(function() {
 export const Line = D3blackbox(function() {
   const path = d3
     .line()
-    .x(d => {
-      console.log(d)
-      return d.x
-    })
+    .x(d => d.x)
     .y(d => d.y)
 
   const parent = d3.select(this.refs.anchor)
