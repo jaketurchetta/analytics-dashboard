@@ -1,7 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
-import { Scoped } from 'kremling'
-import { XAxis, YAxis, YGrid, Line } from './d3/SessionsLineChart.jsx'
+import styled from 'styled-components'
+import { XAxis, YAxis, YGrid, Line } from './utils.jsx'
 
 export default class SessionsLineChart extends React.Component {
   constructor(props) {
@@ -60,29 +60,30 @@ export default class SessionsLineChart extends React.Component {
     }
 
     return (
-      <Scoped css={css}>
-        <svg width={this.props.width} height={this.props.height}>
-          <g
-            className='axisLayer'
-            width={plotWidth}
-            height={plotHeight}
-            transform={`translate(${this.props.margin.left}, ${this.props.margin.top})`}
-          >
-            <YGrid {...metaData} />
-            <XAxis {...metaData} transform={`translate(0,${plotHeight})`} />
-            <YAxis {...metaData} />
-          </g>
-          <g
-            className='plotLayer'
-            width={plotWidth}
-            height={plotHeight}
-            transform={`translate(${this.props.margin.left}, ${this.props.margin.top})`}
-          >
-            <Line {...metaData} {...plotData} />
-          </g>
-        </svg>
-      </Scoped>
+      <svg width={this.props.width} height={this.props.height}>
+        <g
+          className='axisLayer'
+          width={plotWidth}
+          height={plotHeight}
+          transform={`translate(${this.props.margin.left}, ${this.props.margin.top})`}
+        >
+          <YGrid {...metaData} />
+          <XAxis {...metaData} transform={`translate(0,${plotHeight})`} />
+          <YAxis {...metaData} />
+        </g>
+        <g
+          className='plotLayer'
+          width={plotWidth}
+          height={plotHeight}
+          transform={`translate(${this.props.margin.left}, ${this.props.margin.top})`}
+        >
+          <Line {...metaData} {...plotData} />
+        </g>
+      </svg>
     )
   }
 }
 
+const AxisLayer = styled.g`
+  display: none;
+`

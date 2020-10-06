@@ -20,9 +20,7 @@ export default function D3blackbox(d3render) {
 export const XAxis = D3blackbox(function() {
   const axis = d3
     .axisBottom()
-    .tickFormat(d => {
-      return d3.timeFormat("%I:%M %p")(d)
-    })
+    .tickFormat(d => d3.timeFormat("%I:%M %p")(d))
     .scale(this.props.xScale)
 
   d3
