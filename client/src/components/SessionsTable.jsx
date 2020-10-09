@@ -31,49 +31,8 @@ const Styles = styled.div`
   }
 `
 
-  // SessionsTable
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Name',
-        columns: [
-          {
-            Header: 'First Name',
-            accessor: 'firstName',
-          },
-          {
-            Header: 'Last Name',
-            accessor: 'lastName',
-          },
-        ],
-      },
-      {
-        Header: 'Info',
-        columns: [
-          {
-            Header: 'Age',
-            accessor: 'age',
-          },
-          {
-            Header: 'Visits',
-            accessor: 'visits',
-          },
-          {
-            Header: 'Status',
-            accessor: 'status',
-          },
-          {
-            Header: 'Profile Progress',
-            accessor: 'progress',
-          },
-        ],
-      },
-    ],
-    []
-  )
+const SessionsTable = ({ columns, data }) => {
 
-export function SessionsTable({ columns, data }) {
-  // Use the state and functions returned from useTable to build your UI
   const {
     getTableProps,
     getTableBodyProps,
@@ -85,7 +44,6 @@ export function SessionsTable({ columns, data }) {
     data,
   })
 
-  // Render the UI for your table
   return (
     <Styles>
       <table {...getTableProps()}>
@@ -115,16 +73,4 @@ export function SessionsTable({ columns, data }) {
   )
 }
 
-function App() {
-
-
-  const data = React.useMemo(() => makeData(20), [])
-
-  return (
-    <Styles>
-      <Table columns={columns} data={data} />
-    </Styles>
-  )
-}
-
-export default App
+export default SessionsTable

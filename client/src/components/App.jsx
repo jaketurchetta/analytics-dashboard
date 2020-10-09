@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import regeneratorRuntime from 'regenerator-runtime'
 import sessionMapping from '../../../database/sessionMapping.json'
 import SessionsLineChart from './SessionsLineChart.jsx'
 import Metrics from './Metrics.jsx'
 import TopContentChart from './TopContentChart.jsx'
+import SessionsTable from './SessionsTable.jsx'
 
 const PieCharts = styled.div`
-  display: flex
-  align-items: center
-  justify-content: space-evenly
-  margin-bottom: 50px
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 50px;
 `
 
 const mergeObjects = data => {
@@ -36,13 +38,26 @@ const enhanceSessions = json => {
       }
     })
   })
-  sessionMapping.forEach(map => {
-    map.views = mergeObjects(map.views)
-  })
-  sessionMapping.forEach(item => {
-    item.sum = Object.values(item.views).reduce((a, b) => a + b)
-  })
+  sessionMapping.forEach(map => map.views = mergeObjects(map.views))
+  sessionMapping.forEach(item => item.sum = Object.values(item.views).reduce((a, b) => a + b))
+  sessionMapping.sort((a, b) => b.sum - a.sum)
   return sessionMapping
+}
+
+const enhanceViews = json => {
+  json.formatted = []
+  Object.keys(json['Session Page Views']).map(key => {
+    const datetime = new Date(key.substring(0,4), key.substring(5,7) - 1, key.substring(8,10), key.substring(11,13), key.substring(14,16))
+    json.formatted.push({
+      datetime: datetime,
+      date: key.substring(0, 10),
+      time: datetime.getTime(),
+      views: json['Session Page Views'][key]
+    })
+  })
+  json.formatted.sort((a, b) => a.time - b.time)
+  const yMax = Math.max(...Object.values(json['Session Page Views'])) * 1.1
+  return { json: json, yMax: yMax }
 }
 
 const App = () => {
@@ -56,10 +71,11 @@ const App = () => {
     logins: {
       total: null,
       unique: null
-    }
+    },
+    yMax: 400
   })
-  const [fromDate, setFromDate] = useState('2020-08-01')
-  const [toDate, setToDate] = useState('2020-10-01')
+  const [fromDate, setFromDate] = useState('2020-09-01')
+  const [toDate, setToDate] = useState('2020-09-30')
   const [unit, setUnit] = useState('day')
   const [type, setType] = useState('general')
 
@@ -118,7 +134,7 @@ const App = () => {
       })
 
       setData({
-        views: views.json,
+        views: enhanceViews(views.json).json,
         sessions: enhanceSessions(sessions.json),
         countries: countries.json,
         people: people.json,
@@ -126,7 +142,8 @@ const App = () => {
         logins: {
           total: logins.json,
           unique: uniqueLogins.json
-        }
+        },
+        yMax: enhanceViews(views.json).yMax
       })
 
     }
@@ -135,24 +152,45 @@ const App = () => {
 
   }, [])
 
+  const columns = useMemo(() => (
+      [
+          {
+            Header: 'Session',
+            accessor: 'title',
+          },
+          {
+            Header: 'Total Views',
+            accessor: 'sum',
+          },
+          // {
+          //   Header: 'Unique Users',
+          //   accessor: 'users'
+          // },
+          // {
+          //   Header: 'Average Duration', // Should this be median?
+          //   accessor: 'duration'
+          // }
+        ]
+    ), []
+  )
+
   console.log(data)
 
   return (
     <>
-      {/* {this.state.sessionPageViews ? (<SessionsLineChart
-              className="SessionLineChartComponet"
-              sessionPageViews={this.state.sessionPageViews}
-              width={this.state.bodyWidth}
-              height={430}
-              xFn={d => d.time}
-              yFn={d => d.views}
-              yDomain={[0, this.state.yMax]}
-              margin={{ top: 20, left: 40, bottom: 20, right: 20 }}
-            />)
-        : (<p>Loading sessions chart...</p>)} */}
+      {data.views ? (<SessionsLineChart
+          data={data.views.formatted}
+          xFn={d => d.time}
+          yFn={d => d.views}
+          yDomain={[0, data.yMax]}
+          width={size.width}
+          height={430}
+          margin={{ top: 20, left: 40, bottom: 20, right: 20 }}
+        />)
+        : (<p>Loading sessions chart...</p>)}
 
       {data.views && data.people ? (<Metrics views={data.views} people={data.people}/>)
-                                : (<p>Loading key metrics...</p>)}
+        : (<p>Loading key metrics...</p>)}
 
       <PieCharts>
         {data.sessions ? (<TopContentChart
@@ -164,6 +202,10 @@ const App = () => {
         />)
         : (<p>Loading top content...</p>)}
       </PieCharts>
+
+      {data.sessions ? (<SessionsTable columns={columns} data={data.sessions} />)
+      : (<p>Loading sessions table...</p>)}
+
     </>
   )
 }
