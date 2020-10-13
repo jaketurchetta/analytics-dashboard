@@ -2,16 +2,32 @@ import React, { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import regeneratorRuntime from 'regenerator-runtime'
 import sessionMapping from '../../../database/sessionMapping.json'
-import SessionsLineChart from './SessionsLineChart.jsx'
+import SessionsLineChart from './SessionsLineChart/SessionsLineChart.jsx'
 import Metrics from './Metrics.jsx'
-import TopContentChart from './TopContentChart.jsx'
+import TopContentChart from './TopContentDonutChart/TopContentDonutChart.jsx'
 import SessionsTable from './SessionsTable.jsx'
+import CountriesPieChart from './CountriesPieChart.jsx'
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
+
+const Title = styled.h1`
+  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  margin: 50px;
+`
 
 const PieCharts = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
+  margin-top: 50px;
   margin-bottom: 50px;
 `
 
@@ -177,36 +193,51 @@ const App = () => {
   console.log(data)
 
   return (
-    <>
+    <Container>
+      <Title>The CUBE Event Dashboard: Mirantis Launchpad 2020</Title>
       {data.views ? (<SessionsLineChart
           data={data.views.formatted}
           xFn={d => d.time}
           yFn={d => d.views}
           yDomain={[0, data.yMax]}
-          width={size.width}
+          width={800}
           height={430}
           margin={{ top: 20, left: 40, bottom: 20, right: 20 }}
         />)
         : (<p>Loading sessions chart...</p>)}
 
-      {data.views && data.people ? (<Metrics views={data.views} people={data.people}/>)
-        : (<p>Loading key metrics...</p>)}
+      {data.views && data.people && data.logins.total && data.logins.unique && data.registrations ? (<Metrics
+        views={data.views}
+        people={data.people}
+        totalLogins={Object.values(data.logins.total["Completed Sign In"])}
+        uniqueLogins={Object.values(data.logins.unique["Completed Sign In"])}
+        registrations={Object.values(data.registrations["Completed Sign Up"])}
+      />)
+      : (<p>Loading key metrics...</p>)}
 
       <PieCharts>
         {data.sessions ? (<TopContentChart
           sessions={data.sessions}
+          width={500}
+          height={500}
+          innerRadius={130}
+          outerRadius={250}
+        />)
+        : (<p>Loading top content...</p>)}
+        {/* {data.countries ? (<CountriesPieChart
+          sessions={data.countries}
           width={400}
           height={400}
           innerRadius={120}
           outerRadius={200}
         />)
-        : (<p>Loading top content...</p>)}
+        : (<p>Loading countries...</p>)} */}
       </PieCharts>
 
       {data.sessions ? (<SessionsTable columns={columns} data={data.sessions} />)
       : (<p>Loading sessions table...</p>)}
 
-    </>
+    </Container>
   )
 }
 

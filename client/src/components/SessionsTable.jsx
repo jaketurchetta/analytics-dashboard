@@ -31,6 +31,36 @@ const Styles = styled.div`
   }
 `
 
+const Card = styled.div`
+  border-radius: 30px;
+  background: #ffffff;
+  box-shadow:  35px 35px 70px #c9c9c9,
+              -35px -35px 70px #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 40px;
+  padding-top: 50px;
+  margin-bottom: 50px;
+`
+
+const Top = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border-bottom: 1px solid #DCDCDC;
+`
+
+const Title = styled.h3`
+  font-size: 24px;
+`
+
+
 const SessionsTable = ({ columns, data }) => {
 
   const {
@@ -45,31 +75,36 @@ const SessionsTable = ({ columns, data }) => {
   })
 
   return (
-    <Styles>
-      <table {...getTableProps()}>
-        <thead>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row, i) => {
-            prepareRow(row)
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                })}
+    <Card>
+      <Top>
+        <Title>Top Sessions</Title>
+      </Top>
+      <Styles>
+        <table {...getTableProps()}>
+          <thead>
+            {headerGroups.map(headerGroup => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map(column => (
+                  <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                ))}
               </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </Styles>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row, i) => {
+              prepareRow(row)
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map(cell => {
+                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </Styles>
+    </Card>
   )
 }
 
