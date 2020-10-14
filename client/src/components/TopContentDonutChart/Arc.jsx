@@ -1,6 +1,12 @@
 import React, { useState, useContext } from 'react'
 import * as d3 from 'd3'
+import styled from 'styled-components'
 import { TooltipContext } from './Tooltip.jsx'
+
+const Path = styled.path`
+  width: 100%
+  height: 100%;
+`
 
 const Arc = ({ d, r, color, offsetX, offsetY }) => {
   const [selected, setSelected] = useState(false)
@@ -13,17 +19,13 @@ const Arc = ({ d, r, color, offsetX, offsetY }) => {
     .padAngle(0.01)
 
   const mouseOver = () => {
-    console.log(d)
     const [x, y] = arc.centroid(d)
-    console.log(x)
-    console.log(y)
-
     setSelected(true)
     tooltipContext.setTooltip({
       show: d.index !== null,
       x: x + offsetX + 30,
       y: y + offsetY + 30,
-      content: d.data.stuffer,
+      content: d.data.title + '\n' + d.data.sum.toLocaleString() + ' views',
       orientLeft: offsetX < 0,
     })
   }

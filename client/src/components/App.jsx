@@ -191,8 +191,6 @@ const App = () => {
     ), []
   )
 
-  console.log(data)
-
   return (
     <Container>
       <Title>The CUBE Event Dashboard</Title>
@@ -218,14 +216,14 @@ const App = () => {
       : (<p>Loading key metrics...</p>)}
 
       <PieCharts>
-        {data.sessions ? (<TopContentDonutChart
-          sessions={data.sessions}
-          width={550}
-          height={550}
-          radius={250}
-          x={25}
-          y={25}
-        />)
+        {data.sessions ? ( <TopContentDonutChart
+            sessions={data.sessions}
+            width={600}
+            height={600}
+            radius={150}
+            x={150}
+            y={150}
+          />)
         : (<p>Loading top content...</p>)}
         {/* {data.countries ? (<CountriesPieChart
           sessions={data.countries}

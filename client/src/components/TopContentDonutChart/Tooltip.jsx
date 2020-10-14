@@ -8,14 +8,14 @@ const TooltipContext = React.createContext({
   content: '',
 })
 
-const Tooltip = ({ width, height, children }) => {
+const Tooltip = ({ height, width, children }) => {
   const { x, y, show, orientLeft } = useContext(TooltipContext)
   return (
     <g
       transform={`translate(${orientLeft ? x - width : x}, ${y})`}
       style={{ visibility: show ? 'visible' : 'hidden' }}
     >
-      <foreignObject width={width} height={height}>
+      <foreignObject height={height} width={width}>
         {children}
       </foreignObject>
     </g>

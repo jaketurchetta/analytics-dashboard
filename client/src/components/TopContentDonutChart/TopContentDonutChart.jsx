@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import * as d3 from 'd3'
 import styled from 'styled-components'
 import Tooltip, { TooltipContext } from './Tooltip.jsx'
@@ -48,28 +48,29 @@ const Title = styled.h3`
 `
 
 const TooltipP = styled.p`
-  border-radius: 30px;
+  border-radius: 5px;
   padding: 10px;
   background: #ffffff;
-  box-shadow:  35px 35px 70px #c9c9c9,
-              -35px -35px 70px #ffffff;
+  border: 1px solid;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 `
 
-const DonutSVG = styled.svg`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 50px;
+const DonutDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  z-index: -1;
 `
 
 const TopContentDonutChart = ({ sessions, width, height, x, y, radius }) => {
-  const pie = d3.pie().value(d => d.sum)
+  const pie = d3
+    .pie()
+    .value(d => d.sum)
+    .sort(null)
 
-  const color = d3.scaleOrdinal(d3.schemeCategory10)
+  const outerRadius = radius + 150
+  const colors = d3.scaleOrdinal(d3.schemeCategory10)
 
   const [tooltip, setTooltip] = useState({
     show: false,
@@ -79,34 +80,30 @@ const TopContentDonutChart = ({ sessions, width, height, x, y, radius }) => {
     orientLeft: false
   })
 
-  console.log(x, y)
-
   return (
     <Card>
       <Top>
         <Title>Top Content</Title>
       </Top>
-      <div>
-        <TooltipContext.Provider value={{ ...tooltip, setTooltip }}>
-          <DonutSVG width={width} height={height}>
-            <g transform={`translate(${radius}, ${radius})`}>
-              {pie(sessions).map(d => (
-                <Arc
-                  d={d}
-                  color={color[d.index]}
-                  r={radius}
-                  key={d.index}
-                  offsetX={x}
-                  offsetY={y}
-                />
-              ))}
-            </g>
-            <Tooltip width={150} height={60}>
-              <TooltipP>{tooltip.content}</TooltipP>
-            </Tooltip>
-          </DonutSVG>
-        </TooltipContext.Provider>
-      </div>
+      <TooltipContext.Provider value={{ ...tooltip, setTooltip }}>
+            <svg width={width} height={height}>
+              <g transform={`translate(${outerRadius}, ${outerRadius})`}>
+                {pie(sessions).map(d => (
+                  <Arc
+                    d={d}
+                    color={colors(d.index)}
+                    r={radius}
+                    key={d.index}
+                    offsetX={x}
+                    offsetY={y}
+                  />
+                ))}
+              </g>
+              <Tooltip width={300} height={100}>
+                <TooltipP>{tooltip.content}</TooltipP>
+              </Tooltip>
+            </svg>
+      </TooltipContext.Provider>
     </Card>
   )
 }
