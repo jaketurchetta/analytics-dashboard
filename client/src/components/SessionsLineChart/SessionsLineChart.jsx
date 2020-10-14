@@ -42,8 +42,7 @@ const Card = styled.div`
   padding-right: 40px;
   padding-bottom: 40px;
   padding-top: 10px;
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin: 50px 0px;
 `
 
 const Top = styled.div`

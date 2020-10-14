@@ -4,7 +4,7 @@ import regeneratorRuntime from 'regenerator-runtime'
 import sessionMapping from '../../../database/sessionMapping.json'
 import SessionsLineChart from './SessionsLineChart/SessionsLineChart.jsx'
 import Metrics from './Metrics.jsx'
-import TopContentChart from './TopContentDonutChart/TopContentDonutChart.jsx'
+import TopContentDonutChart from './TopContentDonutChart/TopContentDonutChart.jsx'
 import SessionsTable from './SessionsTable.jsx'
 import CountriesPieChart from './CountriesPieChart.jsx'
 
@@ -16,9 +16,10 @@ const Container = styled.div`
 `
 
 const Title = styled.h1`
+  width: 100%;
   font-size: 40px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin: 50px;
 `
 
@@ -194,7 +195,8 @@ const App = () => {
 
   return (
     <Container>
-      <Title>The CUBE Event Dashboard: Mirantis Launchpad 2020</Title>
+      <Title>The CUBE Event Dashboard</Title>
+      <Title>Mirantis Launchpad 2020</Title>
       {data.views ? (<SessionsLineChart
           data={data.views.formatted}
           xFn={d => d.time}
@@ -216,12 +218,13 @@ const App = () => {
       : (<p>Loading key metrics...</p>)}
 
       <PieCharts>
-        {data.sessions ? (<TopContentChart
+        {data.sessions ? (<TopContentDonutChart
           sessions={data.sessions}
-          width={500}
-          height={500}
-          innerRadius={130}
-          outerRadius={250}
+          width={550}
+          height={550}
+          radius={250}
+          x={25}
+          y={25}
         />)
         : (<p>Loading top content...</p>)}
         {/* {data.countries ? (<CountriesPieChart

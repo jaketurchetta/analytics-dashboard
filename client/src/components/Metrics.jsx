@@ -7,8 +7,7 @@ const MetricsContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin: 50px 0px;
   font-size: 20px;
   font-weight: bold;
 `
