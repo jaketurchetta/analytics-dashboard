@@ -23,28 +23,14 @@ function D3blackbox(d3render, label = '') {
     }
     componentDidMount() {
       d3render.call(this)
+      console.log('CDM')
     }
     componentDidUpdate() {
       d3render.call(this)
     }
     render() {
       const transform = this.props.transform || ""
-
-      if (label === "Date") {
-        return (
-          <g transform={transform} ref="anchor">
-              <XLabel>{label}</XLabel>
-          </g>
-        )
-      } else if (label === "Session Page Views") {
-        return (
-          <g transform={transform} ref="anchor">
-              <YLabel>{label}</YLabel>
-          </g>
-        )
-      } else {
-        return <g transform={transform} ref="anchor" />
-      }
+      return <g transform={transform} ref="anchor" />
     }
   }
 }
@@ -91,6 +77,7 @@ export const YGrid = D3blackbox(function() {
 })
 
 export const Line = D3blackbox(function() {
+
   const path = d3
     .line()
     .x(d => d.x)
@@ -98,7 +85,7 @@ export const Line = D3blackbox(function() {
 
   const parent = d3.select(this.refs.anchor)
 
-  const current = parent.selectAll(".valueLine").data([this.props.plotData])
+  const current = parent.selectAll("valueLine").data(this.props.plotData)
 
   current.interrupt()
 

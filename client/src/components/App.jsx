@@ -96,8 +96,6 @@ const App = () => {
   const [unit, setUnit] = useState('day')
   const [type, setType] = useState('general')
 
-  const size = useWindowSize()
-
   useEffect(() => {
     const queryMixpanel = async () => {
 
@@ -177,7 +175,12 @@ const App = () => {
           },
           {
             Header: 'Total Views',
-            accessor: 'sum',
+            accessor: d => d.sum.toLocaleString(),
+            sortType: (a, b, id, desc) => {
+              if (parseInt(a[id], 10) > parseInt(b[id], 10)) return -1
+              if (parseInt(b[id], 10) > parseInt(a[id], 10)) return 1
+              return 0
+            },
           },
           // {
           //   Header: 'Unique Users',
@@ -223,7 +226,7 @@ const App = () => {
             height={550}
             radius={250}
             x={175}
-            y={125}
+            y={120}
           />)
         : (<p>Loading top content...</p>)}
         {/* {data.countries ? (<CountriesPieChart
@@ -241,31 +244,6 @@ const App = () => {
 
     </Container>
   )
-}
-
-const useWindowSize = () => {
-
-  const [windowSize, setWindowSize] = useState({
-    width: undefined,
-    height: undefined,
-  })
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      })
-    }
-
-    window.addEventListener("resize", handleResize)
-
-    handleResize()
-
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  return windowSize
 }
 
 

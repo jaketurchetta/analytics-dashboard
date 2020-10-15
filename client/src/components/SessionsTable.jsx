@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useTable } from 'react-table'
+import { useTable, useSortBy } from 'react-table'
 
 const Styles = styled.div`
   padding: 1rem;
@@ -72,7 +72,7 @@ const SessionsTable = ({ columns, data }) => {
   } = useTable({
     columns,
     data,
-  })
+  }, useSortBy)
 
   return (
     <Card>
@@ -85,7 +85,16 @@ const SessionsTable = ({ columns, data }) => {
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render('Header')}
+                    <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                    </span>
+                  </th>
                 ))}
               </tr>
             ))}

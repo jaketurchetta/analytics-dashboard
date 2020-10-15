@@ -60,6 +60,8 @@ const Title = styled.h3`
 
 const SessionsLineChart = props => {
 
+  console.log("Line chart render")
+
   const updateScale = props => {
     const data = props.data
     const xScale = d3.scaleTime()
