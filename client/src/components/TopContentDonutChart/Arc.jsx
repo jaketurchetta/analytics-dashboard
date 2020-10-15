@@ -8,9 +8,11 @@ const Path = styled.path`
   height: 100%;
 `
 
-const Arc = ({ d, r, color, offsetX, offsetY }) => {
+const Arc = ({ d, r, color, totalViews, x, y }) => {
   const [selected, setSelected] = useState(false)
   const tooltipContext = useContext(TooltipContext)
+
+  console.log(totalViews)
 
   const arc = d3
     .arc()
@@ -19,14 +21,17 @@ const Arc = ({ d, r, color, offsetX, offsetY }) => {
     .padAngle(0.01)
 
   const mouseOver = () => {
-    const [x, y] = arc.centroid(d)
+    // const [x, y] = arc.centroid(d)
     setSelected(true)
+    const p = Math.round(d.data.sum / totalViews)
     tooltipContext.setTooltip({
       show: d.index !== null,
-      x: x + offsetX + 30,
-      y: y + offsetY + 30,
-      content: d.data.title + '\n' + d.data.sum.toLocaleString() + ' views',
-      orientLeft: offsetX < 0,
+      x: x, // + offsetX + 30,
+      y: y, // + offsetY + 30,
+      contentTitle: d.data.title,
+      contentViews: d.data.sum.toLocaleString(),
+      contentPercent: p,
+      // orientLeft: offsetX < 0,
     })
   }
 

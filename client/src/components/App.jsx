@@ -216,13 +216,14 @@ const App = () => {
       : (<p>Loading key metrics...</p>)}
 
       <PieCharts>
-        {data.sessions ? ( <TopContentDonutChart
+        {data.sessions && data.views ? ( <TopContentDonutChart
             sessions={data.sessions}
-            width={600}
-            height={600}
-            radius={150}
-            x={150}
-            y={150}
+            views={data.views}
+            width={550}
+            height={550}
+            radius={250}
+            x={175}
+            y={125}
           />)
         : (<p>Loading top content...</p>)}
         {/* {data.countries ? (<CountriesPieChart

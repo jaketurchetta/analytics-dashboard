@@ -19,9 +19,6 @@ const Styles = styled.div`
 `
 
 const Card = styled.div`
-  padding-left: 40px;
-  padding-right: 40px;
-  padding-bottom: 40px;
   padding-top: 10px;
   border-radius: 30px;
   background: #ffffff;
@@ -41,42 +38,52 @@ const Top = styled.div`
   align-items: flex-start;
   border-bottom: 1px solid #DCDCDC;
   margin-bottom: 40px;
+  margin: 0px 40px;
 `
 
 const Title = styled.h3`
   font-size: 24px;
 `
 
-const TooltipP = styled.p`
+const TooltipDiv = styled.div`
+  height: 100%;
+  font-size 20px;
   border-radius: 5px;
   padding: 10px;
-  background: #ffffff;
-  border: 1px solid;
+  background-color:rgba(255, 255, 255, 0);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
+`
+const Session = styled.div`
+  font-style: italic;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: center;
 `
 
-const DonutDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  z-index: -1;
+const Stat = styled.div`
 `
 
-const TopContentDonutChart = ({ sessions, width, height, x, y, radius }) => {
+const TopContentDonutChart = ({ sessions, views, width, height, x, y, radius }) => {
   const pie = d3
     .pie()
     .value(d => d.sum)
     .sort(null)
 
-  const outerRadius = radius + 150
+  const totalViews = Object.values(views['Session Page Views']).reduce((a, b) => a + b)
+  const Xbound = radius + 25
+  const Ybound = radius + 25
   const colors = d3.scaleOrdinal(d3.schemeCategory10)
 
   const [tooltip, setTooltip] = useState({
     show: false,
     x: 0,
     y: 0,
-    content: '',
+    contentTitle: '',
+    contentViews: '',
+    contentPercent: '',
     orientLeft: false
   })
 
@@ -86,23 +93,28 @@ const TopContentDonutChart = ({ sessions, width, height, x, y, radius }) => {
         <Title>Top Content</Title>
       </Top>
       <TooltipContext.Provider value={{ ...tooltip, setTooltip }}>
-            <svg width={width} height={height}>
-              <g transform={`translate(${outerRadius}, ${outerRadius})`}>
-                {pie(sessions).map(d => (
-                  <Arc
-                    d={d}
-                    color={colors(d.index)}
-                    r={radius}
-                    key={d.index}
-                    offsetX={x}
-                    offsetY={y}
-                  />
-                ))}
-              </g>
-              <Tooltip width={300} height={100}>
-                <TooltipP>{tooltip.content}</TooltipP>
-              </Tooltip>
-            </svg>
+        <svg width={width} height={height}>
+          <g transform={`translate(${Xbound}, ${Ybound})`}>
+            {pie(sessions).map(d => (
+              <Arc
+                d={d}
+                color={colors(d.index)}
+                r={radius}
+                key={d.index}
+                x={x}
+                y={y}
+                totalViews={totalViews}
+              />
+            ))}
+          </g>
+          <Tooltip width={200} height={300}>
+            <TooltipDiv>
+              <Session>{tooltip.contentTitle}</Session>
+              <Stat>{`Views: ${tooltip.contentViews}`}</Stat>
+              <Stat>{`Share: ${tooltip.contentPercent}%`}</Stat>
+            </TooltipDiv>
+          </Tooltip>
+        </svg>
       </TooltipContext.Provider>
     </Card>
   )
