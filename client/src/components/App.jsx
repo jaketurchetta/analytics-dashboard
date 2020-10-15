@@ -5,8 +5,9 @@ import sessionMapping from '../../../database/sessionMapping.json'
 import SessionsLineChart from './SessionsLineChart/SessionsLineChart.jsx'
 import Metrics from './Metrics.jsx'
 import TopContentDonutChart from './TopContentDonutChart/TopContentDonutChart.jsx'
+import GeographiesPieChart from './GeographiesPieChart/GeographiesPieChart.jsx'
 import SessionsTable from './SessionsTable.jsx'
-import CountriesPieChart from './CountriesPieChart.jsx'
+
 
 const Container = styled.div`
   display: flex;
@@ -16,15 +17,25 @@ const Container = styled.div`
 `
 
 const Title = styled.h1`
-  width: 100%;
-  font-size: 40px;
-  display: flex;
-  justify-content: flex-start;
-  margin: 50px;
+  font-size: 35px;
+  margin-bottom: 10px;
+  padding-left: 50px;
+  padding-right: 50px;
+  margin-top: 10px;
+`
+
+const SubTitle = styled.h1`
+  font-size: 30px;
+  font-weight: none;
+  margin-top: 0px;
+  padding-left: 50px;
+  padding-right: 50px;
+  margin-bottom: 50px;
 `
 
 const PieCharts = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
@@ -83,7 +94,7 @@ const App = () => {
     views: null,
     people: null,
     sessions: null,
-    countries: null,
+    geographies: null,
     registrations: null,
     logins: {
       total: null,
@@ -151,7 +162,7 @@ const App = () => {
       setData({
         views: enhanceViews(views.json).json,
         sessions: enhanceSessions(sessions.json),
-        countries: countries.json,
+        geographies: countries.json,
         people: people.json,
         registrations: registrations.json,
         logins: {
@@ -197,7 +208,7 @@ const App = () => {
   return (
     <Container>
       <Title>The CUBE Event Dashboard</Title>
-      <Title>Mirantis Launchpad 2020</Title>
+      <SubTitle>Mirantis Launchpad 2020</SubTitle>
       {data.views ? (<SessionsLineChart
           data={data.views.formatted}
           xFn={d => d.time}
@@ -219,7 +230,7 @@ const App = () => {
       : (<p>Loading key metrics...</p>)}
 
       <PieCharts>
-        {data.sessions && data.views ? ( <TopContentDonutChart
+        {data.sessions && data.views ? (<TopContentDonutChart
             sessions={data.sessions}
             views={data.views}
             width={550}
@@ -229,14 +240,16 @@ const App = () => {
             y={120}
           />)
         : (<p>Loading top content...</p>)}
-        {/* {data.countries ? (<CountriesPieChart
-          sessions={data.countries}
-          width={400}
-          height={400}
-          innerRadius={120}
-          outerRadius={200}
+        {data.geographies ? (<GeographiesPieChart
+          geographies={data.geographies}
+          views={data.views}
+          width={550}
+          height={550}
+          radius={250}
+          x={175}
+          y={120}
         />)
-        : (<p>Loading countries...</p>)} */}
+        : (<p>Loading countries...</p>)}
       </PieCharts>
 
       {data.sessions ? (<SessionsTable columns={columns} data={data.sessions} />)
