@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import regeneratorRuntime from 'regenerator-runtime'
+import { DateTime } from 'luxon'
 import sessionMapping from '../../../database/sessionMapping.json'
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 import SessionsLineChart from './SessionsLineChart/SessionsLineChart.jsx'
 import Metrics from './Metrics.jsx'
 import TopContentDonutChart from './TopContentDonutChart/TopContentDonutChart.jsx'
@@ -24,13 +27,63 @@ const Title = styled.h1`
   margin-top: 10px;
 `
 
-const SubTitle = styled.h1`
+const SubTitle = styled.h2`
   font-size: 30px;
   font-weight: none;
   margin-top: 0px;
   padding-left: 50px;
   padding-right: 50px;
-  margin-bottom: 50px;
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #DCDCDC;
+`
+
+const DateDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
+
+const DateForm = styled.form`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
+
+const DateHeader = styled.p`
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-top: 0px;
+`
+
+const Dates = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+`
+
+const DateLabel = styled.div`
+  margin-right: 5px;
+  margin-left: 10px;
+`
+
+const RefreshButton = styled.button`
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: none;
+  background: #87CEFA;
+  font-size: 20px;
+  font-style: italic;
 `
 
 const PieCharts = styled.div`
@@ -61,6 +114,11 @@ const mergeObjects = data => {
 const enhanceSessions = json => {
   Object.keys(json).forEach(key => {
     sessionMapping.forEach(map => {
+      if (!Array.isArray(map.views)) {
+        let arr = []
+        arr.push(map.views)
+        map.views = arr
+      }
       if (key.indexOf(map.id) > -1) {
         map.views.push(json[key])
       }
@@ -102,6 +160,10 @@ const App = () => {
     },
     yMax: 400
   })
+  const [dates, setDates] = useState({
+    start: '2020-09-01',
+    end: '2020-09-30'
+  })
   const [fromDate, setFromDate] = useState('2020-09-01')
   const [toDate, setToDate] = useState('2020-09-30')
   const [unit, setUnit] = useState('day')
@@ -114,14 +176,14 @@ const App = () => {
       const views = await MP.api.events("Session Page Views", "Event Page Views", {
         type: type,
         unit: unit,
-        from_date: fromDate,
-        to_date: toDate
+        from_date: dates.start,
+        to_date: dates.end
       })
 
       // Top content
       const sessions = await MP.api.segment("Session Page Views", "$current_url", {
-        from_date: fromDate,
-        to_date: toDate
+        from_date: dates.start,
+        to_date: dates.end
       })
 
       // Total unique users (all time)
@@ -131,31 +193,31 @@ const App = () => {
 
       // Unique registrations
       const registrations = await MP.api.events("Completed Sign Up", {
-        from_date: fromDate,
-        to_date: toDate,
+        from_date: dates.start,
+        to_date: dates.end,
         type: "unique"
       })
 
       // Total logins
       const logins = await MP.api.events("Completed Sign In", {
-        from_date: fromDate,
-        to_date: toDate,
+        from_date: dates.start,
+        to_date: dates.end,
         unit: unit,
         type: type
       })
 
       // Unique logins
       const uniqueLogins = await MP.api.events("Completed Sign In", {
-        from_date: fromDate,
-        to_date: toDate,
+        from_date: dates.start,
+        to_date: dates.end,
         unit: unit,
         type: "unique"
       })
 
       // Geo session starts
       const countries = await MP.api.segment("Session Page Views", "mp_country_code", {
-        from_date: fromDate,
-        to_date: toDate,
+        from_date: dates.start,
+        to_date: dates.end,
         type: type
       })
 
@@ -176,7 +238,7 @@ const App = () => {
 
     queryMixpanel()
 
-  }, [])
+  }, [dates, unit, type])
 
   const columns = useMemo(() => (
       [
@@ -202,13 +264,33 @@ const App = () => {
           //   accessor: 'duration'
           // }
         ]
-    ), []
+    ), [data.sessions]
   )
+
+  const handleSubmit = event => {
+    event.preventDefault()
+    setDates({
+      start: fromDate,
+      end: toDate
+    })
+  }
 
   return (
     <Container>
       <Title>The CUBE Event Dashboard</Title>
       <SubTitle>Mirantis Launchpad 2020</SubTitle>
+      <DateDiv>
+        <DateHeader>Select date range: </DateHeader>
+        <DateForm onSubmit={handleSubmit}>
+          <Dates>
+            <DateLabel>Start date:</DateLabel>
+            <DatePicker id="startDate" selected={new Date(fromDate)} onChange={date => setFromDate(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`)} />
+            <DateLabel>End date:</DateLabel>
+            <DatePicker id="endDate" selected={new Date(toDate)} onChange={date => setToDate(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`)} />
+          </Dates>
+          <RefreshButton type="submit">Refresh Data</RefreshButton>
+        </DateForm>
+      </DateDiv>
       {data.views ? (<SessionsLineChart
           data={data.views.formatted}
           xFn={d => d.time}
