@@ -74,8 +74,6 @@ const SessionsTable = ({ columns, data }) => {
     data,
   }, useSortBy)
 
-  console.log("Table!")
-
   return (
     <Card>
       <Top>

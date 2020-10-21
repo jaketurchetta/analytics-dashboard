@@ -142,8 +142,7 @@ const enhanceViews = json => {
     })
   })
   json.formatted.sort((a, b) => a.time - b.time)
-  const yMax = Math.max(...Object.values(json['Session Page Views'])) * 1.1
-  return { json: json, yMax: yMax }
+  return json
 }
 
 const App = () => {
@@ -158,7 +157,6 @@ const App = () => {
       total: null,
       unique: null
     },
-    yMax: 400
   })
   const [dates, setDates] = useState({
     start: '2020-09-01',
@@ -222,7 +220,7 @@ const App = () => {
       })
 
       setData({
-        views: enhanceViews(views.json).json,
+        views: enhanceViews(views.json),
         sessions: enhanceSessions(sessions.json),
         geographies: countries.json,
         people: people.json,
@@ -231,7 +229,6 @@ const App = () => {
           total: logins.json,
           unique: uniqueLogins.json
         },
-        yMax: enhanceViews(views.json).yMax
       })
 
     }
@@ -291,16 +288,16 @@ const App = () => {
           <RefreshButton type="submit">Refresh Data</RefreshButton>
         </DateForm>
       </DateDiv>
+
       {data.views ? (<SessionsLineChart
-          data={data.views.formatted}
-          xFn={d => d.time}
-          yFn={d => d.views}
-          yDomain={[0, data.yMax]}
-          width={800}
-          height={430}
-          margin={{ top: 20, left: 40, bottom: 20, right: 20 }}
-        />)
-        : (<p>Loading sessions chart...</p>)}
+                data={data.views.formatted}
+                positionX={d => d.time}
+                positionY={d => d.views}
+                lineColor={'#8A2BE2'}
+                xFn={d => d.time}
+                yDomain={[0, data.yMax]}
+              />)
+              : (<p>Loading sessions chart...</p>)}
 
       {data.views && data.people && data.logins.total && data.logins.unique && data.registrations ? (<Metrics
         views={data.views}

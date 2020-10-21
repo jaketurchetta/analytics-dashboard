@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useMemo }  from 'react'
-import * as d3 from 'd3'
+
+import React, { useEffect } from 'react'
+import { scaleLinear, scaleTime, max, line, select, extent } from 'd3'
 import styled from 'styled-components'
-import { XAxis, YAxis, YGrid, Line } from './LineAxis.jsx'
+import { Line, Dots } from './Line.jsx'
+import { YGrid, XAxis, YAxis } from './Axes.jsx'
 
 const Styles = styled.div`
   display: flex;
@@ -21,11 +23,6 @@ const Styles = styled.div`
   .axisLayer .yGrid .tick > line {
     stroke-dasharray: 3;
     color: #DCDCDC;
-  }
-  .plotLayer .valueLine {
-    fill: none;
-    stroke-width: 3;
-    stroke: #8A2BE2;
   }
 `
 
@@ -58,90 +55,64 @@ const Title = styled.h3`
   font-size: 24px;
 `
 
-const SessionsLineChart = props => {
+const SessionsLineChart = props =>  {
 
-  console.log("Line chart render")
+    const { data, lineColor, positionX, positionY, xFn, yDomain } = props
+    const margin  = {top: 20, right: 20, bottom: 20, left: 40}
+    const width = 800
+    const height = 430
+    const plotWidth = width - (margin.left + margin.right)
+    const plotHeight = height - (margin.top + margin.bottom)
 
-  const updateScale = props => {
-    const data = props.data
-    const xScale = d3.scaleTime()
-    const yScale = d3.scaleLinear().nice()
+    const xDomain = extent(data, d => d.time)
 
-    const xDomain = d3.extent(data, d => d.time)
-    const yDomain = props.yDomain || [0, d3.max(data, d => props.yFn(d.views))]
-
-    xScale
+    const xScale = scaleTime()
       .domain(xDomain)
-      .range([0, props.width - (props.margin.left + props.margin.right)])
+      .range([0, plotWidth])
 
-    yScale
-      .domain(yDomain)
-      .range([props.height - (props.margin.top + props.margin.bottom), 0])
+    const yScale = scaleLinear()
+      .nice()
+      .domain([0, max(data, d => d.views * 1.1)])
+      .range([plotHeight, 0])
 
-    return { xScale, yScale }
-  }
-
-  const updatePlotSize = props => {
-    const plotWidth =
-      props.width - (props.margin.left + props.margin.right)
-    const plotHeight =
-      props.height - (props.margin.top + props.margin.bottom)
-    return { plotWidth, plotHeight }
-  }
-
-  const { xScale, yScale } = updateScale(props)
-
-  const { plotWidth, plotHeight } = updatePlotSize(props)
-
-  const metaData = {
-    xScale: xScale,
-    yScale: yScale,
-    plotWidth: plotWidth,
-    plotHeight: plotHeight,
-    xSlide: -xScale(props.xFn(props.data[0]))
-  }
-  const plotData = {
-    plotData: props.data.map((d, i) => {
-      return {
-        id: i,
-        data: d.views,
-        x: xScale(props.xFn(d)),
-        y: yScale(props.yFn(d))
+    const metaData = {
+        xScale: xScale,
+        yScale: yScale,
+        plotWidth: plotWidth,
+        plotHeight: plotHeight,
+        xSlide: -xScale(props.xFn(props.data[0]))
       }
-    })
-  }
 
-  return (
-    <Styles>
+    return (
       <Card>
         <Top>
           <Title>Session views over time</Title>
         </Top>
         <Styles>
-        <svg width={props.width} height={props.height}>
-          <g
-            className='axisLayer'
-            width={plotWidth}
-            height={plotHeight}
-            transform={`translate(${props.margin.left}, ${props.margin.top})`}
-          >
-            <YGrid {...metaData} />
-            <XAxis {...metaData} transform={`translate(0,${plotHeight})`} />
-            <YAxis {...metaData} />
-          </g>
-          <g
-            className='plotLayer'
-            width={plotWidth}
-            height={plotHeight}
-            transform={`translate(${props.margin.left}, ${props.margin.top})`}
-          >
-            <Line {...metaData} {...plotData} />
-          </g>
-        </svg>
+          <svg width={width} height={height} >
+            <g
+              className='axisLayer'
+              width={plotWidth}
+              height={plotHeight}
+              transform={`translate(${margin.left}, ${margin.top})`}
+            >
+              <YGrid {...metaData} />
+              <XAxis {...metaData} transform={`translate(0,${plotHeight})`} />
+              <YAxis {...metaData} />
+            </g>
+            <g
+              width={plotWidth}
+              height={plotHeight}
+              transform={`translate(${margin.left}, ${margin.top})`}
+            >
+              <Line xScale={xScale} yScale={yScale} lineColor={lineColor} data={data} plotWidth={plotWidth} plotHeight={plotHeight} margin={margin} />
+              <Dots  xScale={xScale} yScale={yScale} dotsColor={lineColor} data={data} plotWidth={plotWidth} plotHeight={plotHeight} margin={margin} />
+            </g>
+          </svg>
         </Styles>
       </Card>
-    </Styles>
-  )
+      )
+
 }
 
 export default SessionsLineChart
