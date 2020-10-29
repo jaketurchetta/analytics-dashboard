@@ -4,7 +4,6 @@ import { useTable, useSortBy } from 'react-table'
 
 const Styles = styled.div`
   padding: 1rem;
-
   table {
     border-spacing: 0;
     border: 1px solid black;
@@ -31,36 +30,6 @@ const Styles = styled.div`
   }
 `
 
-const Card = styled.div`
-  border-radius: 30px;
-  background: #ffffff;
-  box-shadow:  35px 35px 70px #c9c9c9,
-              -35px -35px 70px #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-left: 40px;
-  padding-right: 40px;
-  padding-bottom: 40px;
-  padding-top: 10px;
-  margin: 50px 0px;
-`
-
-const Top = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  border-bottom: 1px solid #DCDCDC;
-`
-
-const Title = styled.h3`
-  font-size: 24px;
-`
-
-
 const SessionsTable = ({ columns, data }) => {
 
   const {
@@ -75,10 +44,6 @@ const SessionsTable = ({ columns, data }) => {
   }, useSortBy)
 
   return (
-    <Card>
-      <Top>
-        <Title>Top Sessions</Title>
-      </Top>
       <Styles>
         <table {...getTableProps()}>
           <thead>
@@ -113,7 +78,6 @@ const SessionsTable = ({ columns, data }) => {
           </tbody>
         </table>
       </Styles>
-    </Card>
   )
 }
 

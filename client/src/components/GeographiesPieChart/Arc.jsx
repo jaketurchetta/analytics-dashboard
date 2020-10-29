@@ -8,7 +8,7 @@ const Path = styled.path`
   height: 100%;
 `
 
-const Arc = ({ d, r, color, x, y }) => {
+const Arc = ({ d, r, color, x, y, totalViews }) => {
   const [selected, setSelected] = useState(false)
   const tooltipContext = useContext(TooltipContext)
 
@@ -26,7 +26,7 @@ const Arc = ({ d, r, color, x, y }) => {
       y: y,
       country: d.data.country,
       views: d.value.toLocaleString(),
-      percent: d.data.percent,
+      percent: Math.round(10 * ((d.value / totalViews) * 100)) / 10,
     })
   }
 
