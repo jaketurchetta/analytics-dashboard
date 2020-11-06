@@ -39,7 +39,7 @@ const Title = styled.h3`
   font-size: 24px;
 `
 
-const TopContentDonutChartComponent = ({ dates }) => {
+const TopContentDonutChartComponent = ({ dates, instance }) => {
 
   const [data, setData] = useState({
     sessions: []
@@ -48,7 +48,7 @@ const TopContentDonutChartComponent = ({ dates }) => {
   useEffect(() => {
     const queryMixpanel = async () => {
 
-      const topcontent = await axios.post(`/topcontent/${dates.start}/${dates.end}`)
+      const topcontent = await axios.post(`/topcontent/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data)
         .catch(err => console.log(err))
 
@@ -60,7 +60,7 @@ const TopContentDonutChartComponent = ({ dates }) => {
 
     queryMixpanel()
 
-  }, [dates])
+  }, [dates, instance])
 
   return (
     <Card>

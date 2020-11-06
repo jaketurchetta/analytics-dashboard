@@ -41,7 +41,7 @@ const Title = styled.h3`
 `
 
 
-const LineChartComponent = ({ dates }) => {
+const LineChartComponent = ({ dates, instance }) => {
 
   const [data, setData] = useState({
     sessions: [],
@@ -52,11 +52,11 @@ const LineChartComponent = ({ dates }) => {
 
     const queryMixpanel = async () => {
 
-      const dailySessionViews = await axios.post(`/views/sessions/${dates.start}/${dates.end}`)
+      const dailySessionViews = await axios.post(`/views/sessions/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data)
         .catch(err => console.log(err))
 
-      const dailyEventViews = await axios.post(`/views/events/${dates.start}/${dates.end}`)
+      const dailyEventViews = await axios.post(`/views/events/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data)
         .catch(err => console.log(err))
 
@@ -69,7 +69,7 @@ const LineChartComponent = ({ dates }) => {
 
     queryMixpanel()
 
-  }, [dates])
+  }, [dates, instance])
 
   return (
     <Card>

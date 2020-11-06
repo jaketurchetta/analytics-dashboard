@@ -41,7 +41,7 @@ const Title = styled.h3`
   font-size: 24px;
 `
 
-const SessionsTableComponent = ({ dates }) => {
+const SessionsTableComponent = ({ dates, instance }) => {
 
   const [data, setData] = useState({
     sessions: []
@@ -50,7 +50,7 @@ const SessionsTableComponent = ({ dates }) => {
   useEffect(() => {
     const queryMixpanel = async () => {
 
-      const topcontent = await axios.post(`/topcontent/${dates.start}/${dates.end}`)
+      const topcontent = await axios.post(`/topcontent/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data)
         .catch(err => console.log(err))
 
@@ -62,7 +62,7 @@ const SessionsTableComponent = ({ dates }) => {
 
     queryMixpanel()
 
-  }, [dates])
+  }, [dates, instance])
 
   const columns = useMemo(() => (
     [
@@ -79,10 +79,10 @@ const SessionsTableComponent = ({ dates }) => {
             return 0
           },
         },
-        // {
-        //   Header: 'Unique Users',
-        //   accessor: 'users'
-        // },
+        {
+          Header: 'Unique Users',
+          accessor: 'users'
+        },
         // {
         //   Header: 'Average Duration', // Should this be median?
         //   accessor: 'duration'

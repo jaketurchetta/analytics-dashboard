@@ -5,7 +5,9 @@ import regeneratorRuntime from 'regenerator-runtime'
 import { DateTime } from 'luxon'
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-import LineChartComponent from './SessionsLineChart/index.jsx'
+import Dropdown from 'react-dropdown'
+import 'react-dropdown/style.css'
+import LineChartComponent from './LineChart/index.jsx'
 import MetricsComponent from './Metrics/index.jsx'
 import TopContentDonutChartComponent from './TopContentDonutChart/index.jsx'
 import GeographiesPieChartComponent from './GeographiesPieChart/index.jsx'
@@ -97,14 +99,22 @@ const PieCharts = styled.div`
 
 const App = () => {
 
+  const options = [
+    { value: 'summit-2020', label: 'Summit 2020' },
+    { value: 'summit-2020-ja', label: 'Summit 2020: Japan' },
+    { value: 'summit-2020-apac', label: 'Summit 2020: APAC' },
+    { value: 'summit-2020-emea', label: 'Summit 2020: EMEA' },
+  ]
+
   const [dates, setDates] = useState({
-    start: '2020-09-15',
-    end: '2020-09-17'
+    start: '2020-09-29',
+    end: '2020-10-31'
   })
-  const [fromDate, setFromDate] = useState('2020-09-15')
-  const [toDate, setToDate] = useState('2020-09-17')
+  const [fromDate, setFromDate] = useState('2020-09-29 12:00:00')
+  const [toDate, setToDate] = useState('2020-10-31 12:00:00')
   const [unit, setUnit] = useState('day')
   const [type, setType] = useState('general')
+  const [instance, setInstance] = useState(options[0])
 
   const handleSubmit = event => {
     event.preventDefault()
@@ -117,9 +127,10 @@ const App = () => {
   return (
     <Container>
       <Title>The CUBE Event Dashboard</Title>
-      <SubTitle>Mirantis Launchpad 2020</SubTitle>
+      <SubTitle>Snowflake Summit 2020</SubTitle>
+      <DateHeader>Instance: </DateHeader>
+      <Dropdown options={options} onChange={option => setInstance(option.value)} value={options[0]} placeholder="Select an instance" />
       <DateDiv>
-        <DateHeader>Select date range: </DateHeader>
         <DateForm onSubmit={handleSubmit}>
           <Dates>
             <DateLabel>Start date:</DateLabel>
@@ -130,13 +141,13 @@ const App = () => {
           <RefreshButton type="submit">Refresh Data</RefreshButton>
         </DateForm>
       </DateDiv>
-      <LineChartComponent dates={dates} />
-      <MetricsComponent dates={dates} />
+      <LineChartComponent dates={dates} instance={instance.value} />
+      {/* <MetricsComponent dates={dates} instance={instance.value} />
       <PieCharts>
-        <TopContentDonutChartComponent dates={dates} />
-        <GeographiesPieChartComponent dates={dates} />
+        <TopContentDonutChartComponent dates={dates} instance={instance.value} />
+        <GeographiesPieChartComponent dates={dates} instance={instance.value} />
       </PieCharts>
-      <SessionsTableComponent dates={dates} />
+      <SessionsTableComponent dates={dates} instance={instance.value} /> */}
     </Container>
   )
 }

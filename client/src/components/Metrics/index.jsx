@@ -3,7 +3,7 @@ import axios from 'axios'
 import styled from 'styled-components'
 import Metrics from './Metrics.jsx'
 
-const MetricsComponent = ({ dates }) => {
+const MetricsComponent = ({ dates, instance }) => {
 
   const [data, setData] = useState({
     views: {
@@ -21,28 +21,28 @@ const MetricsComponent = ({ dates }) => {
   useEffect(() => {
     const queryMixpanel = async () => {
 
-      const sessionViews = await axios.post(`/views/sessions/total/${dates.start}/${dates.end}`)
+      const sessionViews = await axios.post(`/views/sessions/total/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data[0].value)
         .catch(err => console.log(err))
 
-      const eventViews = await axios.post(`/views/events/total/${dates.start}/${dates.end}`)
+      const eventViews = await axios.post(`/views/events/total/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data[0].value)
         .catch(err => console.log(err))
 
-      const uniqueUsers = await axios.post(`/users/unique/${dates.start}/${dates.end}`)
+      const uniqueUsers = await axios.post(`/users/unique/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data.length)
         .catch(err => console.log(err))
 
-      const uniqueLogins = await axios.post(`/logins/unique/${dates.start}/${dates.end}`)
+      const uniqueLogins = await axios.post(`/logins/unique/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data.length)
         .catch(err => console.log(err))
 
-      const totalLogins = await axios.post(`/logins/total/${dates.start}/${dates.end}`)
+      const totalLogins = await axios.post(`/logins/total/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data[0].value)
         .catch(err => console.log(err))
 
-      const uniqueRegistrations = await axios.post(`/registrations/unique/${dates.start}/${dates.end}`)
-        .then(response => response.data[0].value)
+      const uniqueRegistrations = await axios.post(`/registrations/unique/${instance}/${dates.start}/${dates.end}`)
+        .then(response => response.data.length)
         .catch(err => console.log(err))
 
       setData({
@@ -61,7 +61,7 @@ const MetricsComponent = ({ dates }) => {
 
     queryMixpanel()
 
-  }, [dates])
+  }, [dates, instance])
 
   return (
     <Metrics data={data} />

@@ -8,7 +8,8 @@ csv()
   .fromFile(filePath)
   .then(json => {
     json.forEach(obj => {
-      obj.views = []
+      obj.views = 0
+      obj.users = 0
     })
     const stringifiedJSON = JSON.stringify(json)
     fs.writeFile('database/sessionMapping.json', stringifiedJSON, err => {

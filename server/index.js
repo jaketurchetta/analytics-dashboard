@@ -26,20 +26,20 @@ app.use( morgan('dev') )
 // Routes
 
 // Line chart
-app.post('/views/sessions/:start/:end', Controller.dailySessionViews)
-app.post('/views/events/:start/:end', Controller.dailyEventViews)
+app.post('/views/sessions/:instance/:start/:end', Controller.dailySessionViews)
+app.post('/views/events/:instance/:start/:end', Controller.dailyEventViews)
 
 // Metrics
-app.post('/views/sessions/total/:start/:end', Controller.totalSessionViews)
-app.post('/views/events/total/:start/:end', Controller.totalEventViews)
-app.post('/users/unique/:start/:end', Controller.uniqueUsers)
-app.post('/logins/unique/:start/:end', Controller.uniqueLogins)
-app.post('/logins/total/:start/:end', Controller.totalLogins)
-app.post('/registrations/unique/:start/:end', Controller.uniqueRegistrations)
+app.post('/views/sessions/total/:instance/:start/:end', Controller.totalSessionViews)
+app.post('/views/events/total/:instance/:start/:end', Controller.totalEventViews)
+app.post('/users/unique/:instance/:start/:end', Controller.uniqueUsers)
+app.post('/logins/unique/:instance/:start/:end', Controller.uniqueLogins)
+app.post('/logins/total/:instance/:start/:end', Controller.totalLogins)
+app.post('/registrations/unique/:instance/:start/:end', Controller.uniqueRegistrations)
 
 // Pie charts
-app.post('/topcontent/:start/:end', Controller.topContent)
-app.post('/geographies/countries/:start/:end', Controller.geoCountries)
+app.post('/topcontent/:instance/:start/:end', Controller.topContent)
+app.post('/geographies/countries/:instance/:start/:end', Controller.geoCountries)
 
 // Listen
 app.listen(PORT, console.log('Listening on PORT: ', PORT))

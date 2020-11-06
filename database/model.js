@@ -12,9 +12,9 @@ let url = 'https://mixpanel.com/api/2.0/jql'
 module.exports = {
 
   // Line chart
-  dailySessionViews: (start, end, res) => {
+  dailySessionViews: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views").groupBy([mixpanel.numeric_bucket('time', mixpanel.daily_time_buckets)], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views" && event.properties["event name"] === '${instance}').groupBy([mixpanel.numeric_bucket('time', mixpanel.daily_time_buckets)], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -34,9 +34,9 @@ module.exports = {
       .catch(err => console.error('error:' + err))
   },
 
-  dailyEventViews: (start, end, res) => {
+  dailyEventViews: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Event Page Views").groupBy([mixpanel.numeric_bucket('time', mixpanel.daily_time_buckets)], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Event Page Views" && event.properties["event name"] === '${instance}').groupBy([mixpanel.numeric_bucket('time', mixpanel.daily_time_buckets)], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -57,9 +57,9 @@ module.exports = {
   },
 
   // Metrics
-  totalSessionViews: (start, end, res) => {
+  totalSessionViews: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views").groupBy(["name"], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views" && event.properties["event name"] === '${instance}').groupBy(["name"], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -76,9 +76,9 @@ module.exports = {
       .catch(err => console.error('error:' + err))
   },
 
-  totalEventViews: (start, end, res) => {
+  totalEventViews: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Event Page Views").groupBy(["name"], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Event Page Views" && event.properties["event name"] === '${instance}').groupBy(["name"], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -95,9 +95,9 @@ module.exports = {
       .catch(err => console.error('error:' + err))
   },
 
-  uniqueUsers: (start, end, res) => {
+  uniqueUsers: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Event Page Views" || event.name === "Session Page Views").groupByUser(["properties.$email"], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => (event.name === "Event Page Views" || event.name === "Session Page Views") && event.properties["event name"] === '${instance}').groupByUser(["properties.$email"], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -114,9 +114,9 @@ module.exports = {
       .catch(err => console.error('error:' + err))
   },
 
-  uniqueLogins: (start, end, res) => {
+  uniqueLogins: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Completed Sign In").groupByUser(["properties.email"], mixpanel.reducer.null()).groupBy([mixpanel.slice("key", 0)], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Completed Sign In" && event.properties["Event"] === '${instance}').groupByUser(["properties.email"], mixpanel.reducer.null()).groupBy([mixpanel.slice("key", 0)], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -133,9 +133,9 @@ module.exports = {
       .catch(err => console.error('error:' + err))
   },
 
-  totalLogins: (start, end, res) => {
+  totalLogins: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Completed Sign In").groupBy(["name"], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Completed Sign In" && event.properties["Event"] === '${instance}').groupBy(["name"], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -152,9 +152,9 @@ module.exports = {
       .catch(err => console.error('error:' + err))
   },
 
-  uniqueRegistrations: (start, end, res) => {
+  uniqueRegistrations: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Completed Sign Up").groupByUser(["properties.email"], mixpanel.reducer.null()).groupBy([mixpanel.slice("key", 1)], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Completed Sign Up" && event.properties["Event"] === '${instance}').groupByUser(["properties.Email"], mixpanel.reducer.null()).groupBy([mixpanel.slice("key", 1)], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -167,14 +167,17 @@ module.exports = {
     }
     fetch(url, options)
       .then(result => result.json())
-      .then(json => res.send(json))
+      .then(json => {
+        console.log(json)
+        res.send(json)
+      })
       .catch(err => console.error('error:' + err))
   },
 
   // Pie charts
-  topContent: (start, end, res) => {
+  topContent: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views").groupBy(["properties.$current_url"], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views" && event.properties["event name"] === '${instance}').groupBy(["properties.$current_url"], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -194,9 +197,9 @@ module.exports = {
       .catch(err => console.error('error:' + err))
   },
 
-  geoCountries: (start, end, res) => {
+  geoCountries: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views" || event.name === "Event Page Views").groupBy(["properties.mp_country_code"], mixpanel.reducer.count()).sortDesc('value') }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => (event.name === "Session Page Views" || event.name === "Event Page Views") && event.properties["event name"] === '${instance}').groupBy(["properties.mp_country_code"], mixpanel.reducer.count()).sortDesc('value') }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -210,9 +213,7 @@ module.exports = {
     fetch(url, options)
       .then(result => result.json())
       .then(json => {
-        console.log(json)
         let data = formatCountries(json)
-        console.log(data)
         res.send(data)
       })
       .catch(err => console.error('error:' + err))

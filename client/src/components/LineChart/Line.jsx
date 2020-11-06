@@ -1,6 +1,10 @@
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { scaleLinear, max, line, select } from 'd3'
+import Tooltip, { TooltipContext } from './Tooltip.jsx'
+import styled from 'styled-components'
+
+
 
 const amimateLine = (xScale, yScale, currentLine, lineColor, data) => {
 
@@ -46,9 +50,36 @@ const animateDots = (xScale, yScale, dotsContainer, dotsColor, data) => {
   })
 }
 
+const animateLegend = (lineColor, key, legendContainer) => {
+
+
+
+}
+
 export const Dots = props => {
 
-  const {xScale, yScale, dotsColor, data, plotWidth, plotHeight, margin } = props
+  const { xScale, yScale, dotsColor, data, plotWidth, plotHeight, margin } = props
+  const [selected, setSelected] = useState(false)
+  const tooltipContext = useContext(TooltipContext)
+
+  console.log(data)
+
+  const mouseOver = () => {
+    console.log("Beep: ")
+    setSelected(true)
+    tooltipContext.setTooltip({
+      show: true,
+      x: 0,
+      y: 0,
+      views: this.views.toLocaleString(),
+      date: this.time.toLocaleString()
+    })
+  }
+
+  const mouseOut = () => {
+    setSelected(null)
+    tooltipContext.setTooltip({ show: false })
+  }
 
   const dotsRef = React.createRef()
 
@@ -57,10 +88,16 @@ export const Dots = props => {
       animateDots(xScale, yScale, dotsContainer, dotsColor, data)
   })
 
-  const dots = data.map((item, index) => <circle key={index} r={0.3}><title>{`${item.date}: ${Math.floor(item.views)}`}</title></circle>)
+  const dots = data.map((item, index) => {
+    console.log(item)
+    return <circle key={index} r={0.3} onMouseOver={item => {
+      console.log(this)
+      mouseOver()
+    }} onMouseOut={() => mouseOut()} />
+  })
 
   return (
-      <g ref={dotsRef} width={plotWidth} height={plotHeight}>
+      <g ref={dotsRef} width={plotWidth} height={plotHeight} >
           {dots}
       </g>
   )
@@ -81,4 +118,27 @@ export const Line = props => {
       <path ref={lineRef} strokeWidth="0.3" fill="none"/>
     </g>
   )
+}
+
+export const Legend = props => {
+
+  const { data } = props
+  const legendRef = React.createRef()
+
+  useEffect(() => {
+    const legendContainer = select(lineRef.current)
+    animateLegend(lineColor, key, legendContainer)
+  })
+
+  const keys = data.map((item, index) => <div>
+      <circle key={index} r={0.3} />
+      <p> {item.line}</p>
+    </div>)
+
+  return(
+    <g width={200} height={100}>
+
+    </g>
+  )
+
 }

@@ -39,7 +39,7 @@ const Title = styled.h3`
   font-size: 24px;
 `
 
-const GeographiesPieChartComponent = ({ dates }) => {
+const GeographiesPieChartComponent = ({ dates, instance }) => {
 
   const [data, setData] = useState({
     countries: [],
@@ -49,7 +49,7 @@ const GeographiesPieChartComponent = ({ dates }) => {
   useEffect(() => {
     const queryMixpanel = async () => {
 
-      const nations = await axios.post(`/geographies/countries/${dates.start}/${dates.end}`)
+      const nations = await axios.post(`/geographies/countries/${instance}/${dates.start}/${dates.end}`)
         .then(response => response.data)
         .catch(err => console.log(err))
 
@@ -61,7 +61,7 @@ const GeographiesPieChartComponent = ({ dates }) => {
 
     queryMixpanel()
 
-  }, [dates])
+  }, [dates, instance])
 
   console.log(data.countries)
 

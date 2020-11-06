@@ -68,6 +68,20 @@ const Stat = styled.div`
   font-size: 35px;
 `
 
+const EventSession = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+`
+
+const Split = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
+
 const Metrics = ({ data }) => {
 
   const totalViews = data.views.session + data.views.event
@@ -79,7 +93,19 @@ const Metrics = ({ data }) => {
         <MetricDiv>
           <Title>Total Page Views</Title>
           {totalViews ? (
-            <Stat>{totalViews.toLocaleString()}</Stat>
+            <div>
+              <Stat>{totalViews.toLocaleString()}</Stat>
+              <EventSession>
+                <Split>
+                  <Subtitle>Event</Subtitle>
+                  <Stat>{data.views.event.toLocaleString()}</Stat>
+                </Split>
+                <Split>
+                  <Subtitle>Session</Subtitle>
+                  <Stat>{data.views.session.toLocaleString()}</Stat>
+                </Split>
+              </EventSession>
+            </div>
             ) : (
               <div className="sweet-loading">
                 <PulseLoader
@@ -146,7 +172,7 @@ const Metrics = ({ data }) => {
             )}
             <Subtitle>Unique</Subtitle>
             {data.logins.unique ? (
-              <Stat>{data.logins.unique}</Stat>
+              <Stat>{data.logins.unique.toLocaleString()}</Stat>
               ) : (
                 <div className="sweet-loading">
                   <PulseLoader
@@ -164,7 +190,7 @@ const Metrics = ({ data }) => {
         <MetricDiv>
           <Title>Registrations</Title>
           {data.registrations ? (
-            <Stat>{data.registrations}</Stat>
+            <Stat>{data.registrations.toLocaleString()}</Stat>
             ) : (
               <div className="sweet-loading">
                 <PulseLoader
