@@ -42,9 +42,9 @@ const LineChart = props => {
 
   const { data, positionX, positionY, xFn, yDomain } = props
   const margin = { top: 20, right: 20, bottom: 20, left: 40 }
-  const width = 800
-  const height = 430
-  const plotWidth = width - (margin.left + margin.right)
+  const width = 1050
+  const height = 500
+  const plotWidth = width - (margin.left + margin.right) - 150
   const plotHeight = height - (margin.top + margin.bottom)
 
   const xDomain = extent(data.sessions, d => d.time)
@@ -98,12 +98,18 @@ const LineChart = props => {
               <Line xScale={xScale} yScale={yScale} lineColor={'#90EE90'} data={data.events} plotWidth={plotWidth} plotHeight={plotHeight} margin={margin} />
               <Dots xScale={xScale} yScale={yScale} dotsColor={'#90EE90'} data={data.events} plotWidth={plotWidth} plotHeight={plotHeight} margin={margin} />
             </g>
-            <Tooltip width={200} height={300}>
+            {/* <Tooltip width={200} height={300}>
               <TooltipDiv>
                 <div>{`Views: ${tooltip.views}`}</div>
                 <div>{`Date: ${tooltip.date}%`}</div>
               </TooltipDiv>
-            </Tooltip>
+            </Tooltip> */}
+            <g>
+              <circle cx={910} cy={235} r={6} fill={'#90EE90'} />
+              <circle cx={910} cy={265} r={6} fill={'#8A2BE2'} />
+              <text x={930} y={235} fontSize={'15px'} alignmentBaseline={'middle'}>Event Views</text>
+              <text x={930} y={265} fontSize={'15px'} alignmentBaseline={'middle'}>Session Views</text>
+            </g>
           </svg>
       </Styles>
     </TooltipContext.Provider>

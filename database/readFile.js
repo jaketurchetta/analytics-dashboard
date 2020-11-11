@@ -2,7 +2,7 @@ const csv = require('csvtojson')
 const fs = require('fs')
 
 // Update file path, file name as needed
-const filePath = 'database/session_mapping.csv'
+const filePath = 'database/snowflake_session_mapping.csv'
 
 csv()
   .fromFile(filePath)

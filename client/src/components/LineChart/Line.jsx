@@ -62,10 +62,7 @@ export const Dots = props => {
   const [selected, setSelected] = useState(false)
   const tooltipContext = useContext(TooltipContext)
 
-  console.log(data)
-
   const mouseOver = () => {
-    console.log("Beep: ")
     setSelected(true)
     tooltipContext.setTooltip({
       show: true,
@@ -89,11 +86,7 @@ export const Dots = props => {
   })
 
   const dots = data.map((item, index) => {
-    console.log(item)
-    return <circle key={index} r={0.3} onMouseOver={item => {
-      console.log(this)
-      mouseOver()
-    }} onMouseOut={() => mouseOut()} />
+    return <circle key={index} r={0.3} onMouseOver={item => mouseOver()} onMouseOut={() => mouseOut()} />
   })
 
   return (

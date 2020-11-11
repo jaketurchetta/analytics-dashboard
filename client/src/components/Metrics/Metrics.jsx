@@ -66,20 +66,17 @@ const Stat = styled.div`
   align-items: center;
   font-weight: normal;
   font-size: 35px;
+  margin-top: 10px;
 `
 
 const EventSession = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-`
-
-const Split = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-weight: normal;
+  font-size: 25px;
 `
 
 const Metrics = ({ data }) => {
@@ -90,119 +87,137 @@ const Metrics = ({ data }) => {
   return (
     <MetricsContainer>
 
-        <MetricDiv>
-          <Title>Total Page Views</Title>
+      <MetricDiv>
+        <Title>Total Page Views</Title>
+        <TotalUnique>
           {totalViews ? (
-            <div>
-              <Stat>{totalViews.toLocaleString()}</Stat>
-              <EventSession>
-                <Split>
-                  <Subtitle>Event</Subtitle>
-                  <Stat>{data.views.event.toLocaleString()}</Stat>
-                </Split>
-                <Split>
-                  <Subtitle>Session</Subtitle>
-                  <Stat>{data.views.session.toLocaleString()}</Stat>
-                </Split>
-              </EventSession>
-            </div>
-            ) : (
-              <div className="sweet-loading">
-                <PulseLoader
-                  css={override}
-                  size={20}
-                  color={"#36D7B7"}
-                  loading={true}
-                  margin={20}
-                />
-              </div>
-            )}
-        </MetricDiv>
-
-        <MetricDiv>
-          <Title>Total Unique Users</Title>
-          {data.users ? (
-            <Stat>{data.users.toLocaleString()}</Stat>
-            ) : (
-              <div className="sweet-loading">
-                <PulseLoader
-                  css={override}
-                  size={20}
-                  color={"#36D7B7"}
-                  loading={true}
-                  margin={20}
-                />
-              </div>
-            )}
-        </MetricDiv>
-
-        <MetricDiv>
-          <Title>Views / User</Title>
-          {viewsPerUser ? (
-          <Stat>{viewsPerUser.toLocaleString()}</Stat>
+            <Stat>{totalViews.toLocaleString()}</Stat>
           ) : (
+              <div className="sweet-loading">
+                <PulseLoader
+                  css={override}
+                  size={15}
+                  color={"#36D7B7"}
+                  loading={true}
+                  margin={5}
+                />
+              </div>
+            )}
+          <Subtitle>Event</Subtitle>
+          {data.views.event ? (
+            <EventSession>{data.views.event.toLocaleString()}</EventSession>
+          ) : (
+              <div className="sweet-loading">
+                <PulseLoader
+                  css={override}
+                  size={15}
+                  color={"#36D7B7"}
+                  loading={true}
+                  margin={5}
+                />
+              </div>
+            )}
+          <Subtitle>Session</Subtitle>
+          {data.views.session ? (
+            <EventSession>{data.views.session.toLocaleString()}</EventSession>
+          ) : (
+              <div className="sweet-loading">
+                <PulseLoader
+                  css={override}
+                  size={15}
+                  color={"#36D7B7"}
+                  loading={true}
+                  margin={5}
+                />
+              </div>
+            )}
+        </TotalUnique>
+      </MetricDiv>
+
+      <MetricDiv>
+        <Title>Total Unique Users</Title>
+        {data.users ? (
+          <Stat>{data.users.toLocaleString()}</Stat>
+        ) : (
             <div className="sweet-loading">
               <PulseLoader
                 css={override}
-                size={20}
+                size={15}
                 color={"#36D7B7"}
                 loading={true}
-                margin={20}
+                margin={5}
               />
             </div>
           )}
-        </MetricDiv>
+      </MetricDiv>
 
-        <MetricDiv>
-          <Title>Logins</Title>
-          <TotalUnique>
-            <Subtitle>Total</Subtitle>
-            {data.logins.total ? (
+      <MetricDiv>
+        <Title>Views / User</Title>
+        {viewsPerUser ? (
+          <Stat>{viewsPerUser.toLocaleString()}</Stat>
+        ) : (
+            <div className="sweet-loading">
+              <PulseLoader
+                css={override}
+                size={15}
+                color={"#36D7B7"}
+                loading={true}
+                margin={5}
+              />
+            </div>
+          )}
+      </MetricDiv>
+
+      <MetricDiv>
+        <Title>Logins</Title>
+        <TotalUnique>
+          <Subtitle>Total</Subtitle>
+          {data.logins.total ? (
             <Stat>{data.logins.total.toLocaleString()}</Stat>
-            ) : (
+          ) : (
               <div className="sweet-loading">
                 <PulseLoader
                   css={override}
                   size={15}
                   color={"#36D7B7"}
                   loading={true}
-                  margin={20}
+                  margin={5}
                 />
               </div>
             )}
-            <Subtitle>Unique</Subtitle>
-            {data.logins.unique ? (
-              <Stat>{data.logins.unique.toLocaleString()}</Stat>
-              ) : (
-                <div className="sweet-loading">
-                  <PulseLoader
-                    css={override}
-                    size={15}
-                    color={"#36D7B7"}
-                    loading={true}
-                    margin={20}
-                  />
-                </div>
-              )}
-          </TotalUnique>
-        </MetricDiv>
+          <Subtitle>Unique</Subtitle>
+          {data.logins.unique ? (
+            <Stat>{data.logins.unique.toLocaleString()}</Stat>
+          ) : (
+              <div className="sweet-loading">
+                <PulseLoader
+                  css={override}
+                  size={15}
+                  color={"#36D7B7"}
+                  loading={true}
+                  margin={5}
+                />
+              </div>
+            )}
+        </TotalUnique>
+      </MetricDiv>
 
-        <MetricDiv>
-          <Title>Registrations</Title>
-          {data.registrations ? (
-            <Stat>{data.registrations.toLocaleString()}</Stat>
-            ) : (
-              <div className="sweet-loading">
-                <PulseLoader
-                  css={override}
-                  size={15}
-                  color={"#36D7B7"}
-                  loading={true}
-                  margin={20}
-                />
-              </div>
-            )}
-        </MetricDiv>
+      <MetricDiv>
+        <Title>Registrations</Title>
+        {data.registrations ? (
+          <Stat>{data.registrations.toLocaleString()}</Stat>
+        ) : (
+            <div className="sweet-loading">
+              <PulseLoader
+                css={override}
+                size={15}
+                color={"#36D7B7"}
+                loading={true}
+                margin={5}
+              />
+            </div>
+          )}
+      </MetricDiv>
 
     </MetricsContainer>
   )

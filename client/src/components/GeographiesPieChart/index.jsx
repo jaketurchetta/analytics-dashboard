@@ -63,8 +63,6 @@ const GeographiesPieChartComponent = ({ dates, instance }) => {
 
   }, [dates, instance])
 
-  console.log(data.countries)
-
   return (
     <Card>
       <Top>

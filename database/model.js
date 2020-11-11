@@ -168,7 +168,6 @@ module.exports = {
     fetch(url, options)
       .then(result => result.json())
       .then(json => {
-        console.log(json)
         res.send(json)
       })
       .catch(err => console.error('error:' + err))
@@ -177,7 +176,7 @@ module.exports = {
   // Pie charts
   topContent: (instance, start, end, res) => {
     const encodedParams = new URLSearchParams()
-    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views" && event.properties["event name"] === '${instance}').groupBy(["properties.$current_url"], mixpanel.reducer.count()) }`)
+    encodedParams.set('script', `function main() { return Events({ from_date: '${start}',  to_date: '${end}' }).filter(event => event.name === "Session Page Views" && event.properties["event name"] === '${instance}').groupBy(["properties.active session id"], mixpanel.reducer.count()) }`)
     encodedParams.set('params', '{ "scriptParam": "paramValue" }')
     let options = {
       method: 'POST',
@@ -243,15 +242,19 @@ const lineChartArrays = json => {
 }
 
 const sumSessions = json => {
-  json.forEach(obj => {
-    sessionMapping.forEach(map => {
-      if (obj.key[0] && obj.key[0].indexOf(map.id) > -1) {
-        map.views += obj.value
+  let result = []
+  let mapping = [...sessionMapping]
+  for (let i = 0; i < json.length; i++) {
+    for (let j = 0; j < mapping.length; j++) {
+      if (json[i].key[0] === mapping[j].id) {
+        let session = mapping[j]
+        session.views = json[i].value
+        result.push(session)
       }
-    })
-  })
-  sessionMapping.sort((a, b) => b.views - a.views)
-  return sessionMapping
+    }
+  }
+  result.sort((a, b) => b.views - a.views)
+  return result
 }
 
 const formatCountries = json => {

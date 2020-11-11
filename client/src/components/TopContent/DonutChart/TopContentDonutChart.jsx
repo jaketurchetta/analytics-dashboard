@@ -55,7 +55,7 @@ const TopContentDonutChart = ({ data }) => {
     .value(d => d.views)
     .sort(null)
 
-  const totalViews = data.sessions.reduce((a, b) => a + b.views, 0)
+  const totalViews = data.reduce((a, b) => a + b.views, 0)
   const width = 550
   const height = 550
   const radius = 250
@@ -69,7 +69,7 @@ const TopContentDonutChart = ({ data }) => {
     <TooltipContext.Provider value={{ ...tooltip, setTooltip }}>
       <svg width={width} height={height}>
         <g transform={`translate(${Xbound}, ${Ybound})`}>
-          {pie(data.sessions).map(d => (
+          {pie(data).map(d => (
             <Arc
               d={d}
               color={colors(d.index)}

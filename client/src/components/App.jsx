@@ -7,11 +7,13 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
+import { css } from "@emotion/core"
+import PulseLoader from "react-spinners/PulseLoader"
 import LineChartComponent from './LineChart/index.jsx'
 import MetricsComponent from './Metrics/index.jsx'
-import TopContentDonutChartComponent from './TopContentDonutChart/index.jsx'
+import TopContentDonutChartComponent from './TopContent/DonutChart/index.jsx'
 import GeographiesPieChartComponent from './GeographiesPieChart/index.jsx'
-import SessionsTableComponent from './SessionsTable/index.jsx'
+import SessionsTableComponent from './TopContent/Table/index.jsx'
 
 const Container = styled.div`
   display: flex;
@@ -46,6 +48,7 @@ const DateDiv = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 15px;
 `
 
 const DateForm = styled.form`
@@ -79,7 +82,7 @@ const DateLabel = styled.div`
 
 const RefreshButton = styled.button`
   padding: 15px;
-  margin-top: 10px;
+  margin-top: 15px;
   border-radius: 5px;
   border: none;
   background: #87CEFA;
@@ -95,6 +98,41 @@ const PieCharts = styled.div`
   justify-content: space-evenly;
   margin-top: 50px;
   margin-bottom: 50px;
+`
+
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+`
+
+const Card = styled.div`
+  border-radius: 30px;
+  background: #ffffff;
+  box-shadow:  35px 35px 70px #c9c9c9,
+              -35px -35px 70px #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 40px;
+  padding-top: 10px;
+  margin: 50px 0px;
+`
+
+const Top = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border-bottom: 1px solid #DCDCDC;
+`
+
+const CardTitle = styled.h3`
+  font-size: 24px;
 `
 
 const App = () => {
@@ -116,11 +154,35 @@ const App = () => {
   const [type, setType] = useState('general')
   const [instance, setInstance] = useState(options[0])
 
+  // Top content data fetch
+  const [data, setData] = useState({
+    sessions: []
+  })
+
+  useEffect(() => {
+    const queryMixpanel = async () => {
+
+      const topcontent = await axios.post(`/topcontent/${instance.value}/${dates.start}/${dates.end}`)
+        .then(response => response.data.filter(session => session.views > 0))
+        .catch(err => console.log(err))
+
+      setData({
+        sessions: topcontent
+      })
+
+    }
+
+    queryMixpanel()
+
+  }, [dates, instance])
+
   const handleSubmit = event => {
     event.preventDefault()
+    fromSplit = fromDate.split(' ')
+    toSplit = toDate.split(' ')
     setDates({
-      start: fromDate,
-      end: toDate
+      start: fromSplit[0],
+      end: toSplit[0]
     })
   }
 
@@ -129,25 +191,59 @@ const App = () => {
       <Title>The CUBE Event Dashboard</Title>
       <SubTitle>Snowflake Summit 2020</SubTitle>
       <DateHeader>Instance: </DateHeader>
-      <Dropdown options={options} onChange={option => setInstance(option.value)} value={options[0]} placeholder="Select an instance" />
+      <Dropdown options={options} onChange={option => setInstance(option)} value={instance} placeholder="Select an instance" />
       <DateDiv>
         <DateForm onSubmit={handleSubmit}>
           <Dates>
             <DateLabel>Start date:</DateLabel>
-            <DatePicker id="startDate" selected={new Date(fromDate)} onChange={date => setFromDate(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`)} />
+            <DatePicker id="startDate" selected={new Date(fromDate)} onChange={date => setFromDate(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} 12:00:00`)} />
             <DateLabel>End date:</DateLabel>
-            <DatePicker id="endDate" selected={new Date(toDate)} onChange={date => setToDate(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`)} />
+            <DatePicker id="endDate" selected={new Date(toDate)} onChange={date => setToDate(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} 12:00:00`)} />
           </Dates>
           <RefreshButton type="submit">Refresh Data</RefreshButton>
         </DateForm>
       </DateDiv>
       <LineChartComponent dates={dates} instance={instance.value} />
-      {/* <MetricsComponent dates={dates} instance={instance.value} />
+      <MetricsComponent dates={dates} instance={instance.value} />
       <PieCharts>
-        <TopContentDonutChartComponent dates={dates} instance={instance.value} />
+        <Card>
+          <Top>
+            <CardTitle>Top Content</CardTitle>
+          </Top>
+          {data.sessions.length ? (
+            <TopContentDonutChartComponent data={data.sessions} />
+          ) : (
+            <div className="sweet-loading">
+              <PulseLoader
+                css={override}
+                size={30}
+                color={"#36D7B7"}
+                loading={true}
+                marginTop={30}
+              />
+            </div>
+          )}
+        </Card>
         <GeographiesPieChartComponent dates={dates} instance={instance.value} />
       </PieCharts>
-      <SessionsTableComponent dates={dates} instance={instance.value} /> */}
+      <Card>
+        <Top>
+          <CardTitle>Top Sessions</CardTitle>
+        </Top>
+        {data.sessions.length ? (
+          <SessionsTableComponent data={data.sessions} />
+        ) : (
+          <div className="sweet-loading">
+            <PulseLoader
+              css={override}
+              size={30}
+              color={"#36D7B7"}
+              loading={true}
+              marginTop={30}
+            />
+          </div>
+        )}
+      </Card>
     </Container>
   )
 }
