@@ -4,8 +4,6 @@ import { scaleLinear, max, line, select } from 'd3'
 import Tooltip, { TooltipContext } from './Tooltip.jsx'
 import styled from 'styled-components'
 
-
-
 const amimateLine = (xScale, yScale, currentLine, lineColor, data) => {
 
   const lineDefinition = line()
@@ -48,12 +46,6 @@ const animateDots = (xScale, yScale, dotsContainer, dotsColor, data) => {
       .attr("stroke", dotsColor)
       .attr("stroke-width", 10)
   })
-}
-
-const animateLegend = (lineColor, key, legendContainer) => {
-
-
-
 }
 
 export const Dots = props => {
@@ -111,27 +103,4 @@ export const Line = props => {
       <path ref={lineRef} strokeWidth="0.3" fill="none"/>
     </g>
   )
-}
-
-export const Legend = props => {
-
-  const { data } = props
-  const legendRef = React.createRef()
-
-  useEffect(() => {
-    const legendContainer = select(lineRef.current)
-    animateLegend(lineColor, key, legendContainer)
-  })
-
-  const keys = data.map((item, index) => <div>
-      <circle key={index} r={0.3} />
-      <p> {item.line}</p>
-    </div>)
-
-  return(
-    <g width={200} height={100}>
-
-    </g>
-  )
-
 }

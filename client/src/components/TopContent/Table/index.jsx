@@ -20,10 +20,10 @@ const SessionsTableComponent = ({ data }) => {
             return 0
           },
         },
-        {
-          Header: 'Unique Users',
-          accessor: 'users'
-        },
+        // {
+        //   Header: 'Unique Users',
+        //   accessor: 'users'
+        // },
       ]
     ), [data]
   )

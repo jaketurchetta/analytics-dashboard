@@ -40,7 +40,6 @@ const Title = styled.h3`
   font-size: 24px;
 `
 
-
 const LineChartComponent = ({ dates, instance }) => {
 
   const [data, setData] = useState({

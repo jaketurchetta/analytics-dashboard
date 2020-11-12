@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import { scaleLinear, scaleTime, max, line, select, extent } from 'd3'
 import styled from 'styled-components'
@@ -10,6 +9,12 @@ const Styles = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  .xAxis {
+    font-size: 12px;
+  }
+  .yAxis {
+    font-size: 12px;
+  }
   .axisLayer .xAxis .domain,
   .axisLayer .xAxis .tick > line {
     display: none;
